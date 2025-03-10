@@ -3,7 +3,7 @@
 # Stop script on error
 set -e
 
-echo "Starting Setting Up"
+echo "Start Setting Up"
 
 VENV_DIR="venvs/efficient-rsnn-bmi"
 
@@ -14,7 +14,12 @@ if [ ! -d "$VENV_DIR" ]; then
 fi
 
 # Activate the virtual environment
-source "$VENV_DIR/bin/activate"
+if [ -d "$VENV_DIR" ]; then
+    echo "Using virtual environment: $VENV_DIR"
+    source "$VENV_DIR/bin/activate"
+else
+    echo "Virtual environment not found!"
+    exit 1
 
 pip install --upgrade pip
 python3 -m pip install --require-virtualenv -e "."

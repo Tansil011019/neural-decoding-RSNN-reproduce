@@ -1,0 +1,8 @@
+model: "rsnn_optimized"
+experiment: "neurobench"
+
+dtype: 'float32'
+
+train_monkeys:
+  - loco
+  - indy
