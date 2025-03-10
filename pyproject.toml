@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "efficient-rsnn-bmi"
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+    "torch",
+    "lightning",
+    "omegaconf",
+    "h5py",
+    "hydra-core"
+]
+requires-python = ">=3.10"
+authors = [
+    {name = "Wilson Tansil", email = "wilsontansil@gmail.com"}
+]
+maintainers = [
+    {name = "Wilson Tansil", email = "wilsontansil@gmail.com"}
+]
+description = "This repository focuses on optimizing Recurrent Spiking Neural Networks (RSNNs) for Brain-Machine Interfaces (BMI)."
+readme = "README.md"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+[project.urls]
+Documentation = "https://github.com/Tansil011019/efficient-rsnn-bmi.git"
+Issues = "https://github.com/Tansil011019/efficient-rsnn-bmi.git/issues"
+
+[tool.hatch.version]
+path = "efficient-rsnn-bmi/__version__.py"
