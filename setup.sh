@@ -8,7 +8,7 @@ echo "Starting Setting Up"
 VENV_DIR="venvs/efficient-rsnn-bmi"
 
 # Check if virtual environment exists
-if [ ! -d "$VENV_DIR"]; then
+if [ ! -d "$VENV_DIR" ]; then
     echo "No virtual environment found, creating one..."
     python3 -m venv $VENV_DIR
 fi
