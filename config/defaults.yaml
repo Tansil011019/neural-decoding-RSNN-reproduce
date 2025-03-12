@@ -2,6 +2,7 @@ model: "rsnn_optimized"
 experiment: "neurobench"
 
 dtype: 'float32'
+node: False
 
 train_monkeys:
   - loco

@@ -20,6 +20,7 @@ if [ -d "$VENV_DIR" ]; then
 else
     echo "Virtual environment not found!"
     exit 1
+fi
 
 pip install --upgrade pip
 python3 -m pip install --require-virtualenv -e "."
