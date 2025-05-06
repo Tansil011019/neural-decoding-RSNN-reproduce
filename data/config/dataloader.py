@@ -7,7 +7,6 @@ from typing import Optional, Tuple, Literal
 class DatasetLoaderConfig:
     """Configuration for the DataLoader."""
     file_path: str
-    filename: str
     val_ratio: float = 0.1
     num_steps: int = 1
     train_ratio: float = 0.8
@@ -27,3 +26,19 @@ class DatasetLoaderConfig:
     p_drop: float = 0.0
     p_insert: float = 0.0
     jitter_sigma: float = 0.0
+
+@dataclass
+class PretrainPrimateReachingConfig:
+    """Configuration for the pretraining of the Primate Reaching dataset."""
+    file_path: str
+    filename: str
+    num_steps: int = 1
+    train_ratio: float = 0.8
+    label_series: bool = False
+    biological_delay: int = 0
+    spike_sorting: bool = False
+    stride: float = 0.004
+    bin_width: float = 0.028
+    max_segment_length: int = 2000
+    split_num: int = 1
+    remove_segments_inactive: bool = False

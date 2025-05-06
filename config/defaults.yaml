@@ -8,8 +8,10 @@ experiment: "neurobench"
 dtype: 'float32'
 node: False
 
+pretraining: True
+
 train_monkeys:
-  - loco
   - indy
+  - loco
 
 seed: False

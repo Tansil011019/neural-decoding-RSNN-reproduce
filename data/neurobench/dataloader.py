@@ -4,10 +4,13 @@ import numpy as np
 import stork
 
 from neurobench.datasets.primate_reaching import PrimateReaching
+from neurobench.datasets.utils import download_url
+from urllib.error import URLError
 
-from data.config.dataloader import DatasetLoaderConfig
+from data.config.dataloader import DatasetLoaderConfig, PretrainPrimateReachingConfig
 
 import math
+import os
 
 from efficient_rsnn_bmi.utils.logger import get_logger
 
@@ -32,38 +35,59 @@ class DatasetLoader(Dataset):
         assert self.config.file_path is not None, "File path must be provided"
         assert self.config.val_ratio > ((1 - self.config.train_ratio) / 2), "Validation ratio must be less than half of the remaining data after training ratio is applied"
         self.n_time_steps = int(self.config.sample_duration / self.config.stride)
+    
+    def get_multiple_sessions_data(self, filenames: list[str]):
+
+        ds_train, ds_val, ds_test = [], [], []
+        for filename in filenames:
+            monkey_train, monkey_val, monkey_test = self.get_single_session_data(filename)
+            ds_train.append(monkey_train)
+            ds_val.append(monkey_val)
+            ds_test.append(monkey_test)
+        dataset_train = torch.utils.data.ConcatDataset(ds_train)
+        dataset_val = torch.utils.data.ConcatDataset(ds_val)
+
+        return dataset_train, dataset_val, ds_test
 
     def get_single_session_data(self, filename: str):
-        dataset = PrimateReaching(
-            file_path=self.config.file_path,
-            filename=filename,
-            num_steps=self.config.num_steps,
-            train_ratio=self.config.train_ratio,
-            label_series=self.config.label_series,
-            biological_delay=self.config.biological_delay,
-            spike_sorting=self.config.spike_sorting,
-            stride=self.config.stride,
-            bin_width=self.config.bin_width,
-            max_segment_length=self.config.max_segment_length,
-            split_num=self.config.split_num,
-            remove_segments_inactive=self.config.remove_segments_inactive,
+        training_config: PretrainPrimateReachingConfig = {
+            "file_path": self.config.file_path,
+            "filename": filename,
+            "num_steps": self.config.num_steps,
+            "train_ratio": self.config.train_ratio,
+            "label_series": self.config.label_series,
+            "biological_delay": self.config.biological_delay,
+            "spike_sorting": self.config.spike_sorting,
+            "stride": self.config.stride,
+            "bin_width": self.config.bin_width,
+            "max_segment_length": self.config.max_segment_length,
+            "split_num": self.config.split_num,
+            "remove_segments_inactive": self.config.remove_segments_inactive,
+        }
+
+        test_config: PretrainPrimateReachingConfig= {
+            "file_path": self.config.file_path,
+            "filename": filename,
+            "num_steps": self.config.num_steps,
+            "train_ratio": self.config.train_ratio,
+            "label_series": self.config.label_series,
+            "biological_delay": self.config.biological_delay,
+            "spike_sorting": self.config.spike_sorting,
+            "stride": self.config.stride,
+            "bin_width": self.config.bin_width,
+            "max_segment_length": self.config.max_segment_length,
+            "split_num": self.config.split_num,
+            "remove_segments_inactive": False
+        }
+
+        dataset = PretrainPrimateReachingDataset(
+            config=training_config
         )
 
         # * This is for generalize testing code with inactive segments
         if self.config.remove_segments_inactive:
-            dataset_test = PrimateReaching(
-                file_path=self.config.file_path,
-                filename=filename,
-                num_steps=self.config.num_steps,
-                train_ratio=self.config.train_ratio,
-                label_series=self.config.label_series,
-                biological_delay=self.config.biological_delay,
-                spike_sorting=self.config.spike_sorting,
-                stride=self.config.stride,
-                bin_width=self.config.bin_width,
-                max_segment_length=self.config.max_segment_length,
-                split_num=self.config.split_num,
-                remove_segments_inactive=False
+            dataset_test = PretrainPrimateReachingDataset(
+                config=test_config
             )
         else:
             dataset_test = dataset
@@ -176,3 +200,50 @@ class DatasetLoader(Dataset):
         )
 
         return monkey_ds
+
+class PretrainPrimateReachingDataset(PrimateReaching):
+    """
+    Loads the data from the PrimateReaching Dataset
+    """
+    def __init__(
+        self,
+        config: PretrainPrimateReachingConfig
+    ):
+        super().__init__(
+            file_path=config['file_path'],
+            filename=config['filename'],
+            num_steps=config['num_steps'],
+            train_ratio=config['train_ratio'],
+            label_series=config['label_series'],
+            biological_delay=config['biological_delay'],
+            spike_sorting=config['spike_sorting'],
+            stride=config['stride'],
+            bin_width=config['bin_width'],
+            max_segment_length=config['max_segment_length'],
+            split_num=config['split_num'],
+            remove_segments_inactive=config['remove_segments_inactive'],
+        )
+        
+    def download(self):
+        """
+        Download the dataset if it is not already present.
+        """
+        if self.filename in self.md5s.keys():
+            md5 = self.md5s[self.filename]
+        else:
+            md5 = None
+
+        if self._check_exists(self.file_path, md5):
+            return
+
+        os.makedirs(os.path.dirname(self.file_path), exist_ok=True)
+
+        # download file
+        url = f"{self.url}{self.filename}"
+        try:
+            print(f"Downloading {url}")
+            download_url(url, self.file_path, md5=md5)
+        except URLError as error:
+            print(f"Failed to download (trying next):\n{error}")
+        finally:
+            print()

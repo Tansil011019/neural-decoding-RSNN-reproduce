@@ -1,9 +1,17 @@
-filename: indy_20170131_02.mat
+defaults:
+  - filenames: filenames
+  - pretrain_filenames: all-filenames
+  - _self_
+
 file_path: /home/cc/efficient-rsnn-bmi/data/datasets
 
 train_ratio: 0.8  # Ratio of training set.
 val_ratio: 0.1  # Ratio of validation set. 
 random_val: False
+
+nb_inputs:
+  loco: 192
+  indy: 96
 
 stride: 0.004  # Time step of the data
 extend_data: True
