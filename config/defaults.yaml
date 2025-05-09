@@ -1,12 +1,14 @@
 defaults:
   - _self_
   - datasets: data
+  - training: training
 
 model: "rsnn_optimized"
 experiment: "neurobench"
 
 dtype: 'float32'
 node: False
+device: "cuda"
 
 pretraining: True
 

@@ -52,6 +52,8 @@ def train_rsnn_tiny(cfg: DictConfig):
 
             print("Training", pretrain_dat)
             print("Validation", pretrain_val_dat)
+
+            
             
 if __name__ == "__main__":
     train_rsnn_tiny()

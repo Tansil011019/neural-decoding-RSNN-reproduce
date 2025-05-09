@@ -9,6 +9,7 @@ train_ratio: 0.8  # Ratio of training set.
 val_ratio: 0.1  # Ratio of validation set. 
 random_val: False
 
+nb_outputs: 2  # Number of outputs
 nb_inputs:
   loco: 192
   indy: 96

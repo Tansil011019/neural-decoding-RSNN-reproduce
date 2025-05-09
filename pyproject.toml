@@ -13,8 +13,9 @@ dependencies = [
     "h5py",
     "hydra-core",
     "neurobench",
-    "stork",
-    "colorlog"
+    "colorlog",
+    "stork @ git+https://github.com/fmi-basel/stork.git@40c68fe",
+    "randman @ git+https://github.com/fzenke/randman"
 ]
 requires-python = ">=3.10"
 authors = [
@@ -36,6 +37,9 @@ Issues = "https://github.com/Tansil011019/efficient-rsnn-bmi.git/issues"
 
 [tool.hatch.version]
 path = "efficient_rsnn_bmi/__version__.py"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/"]
