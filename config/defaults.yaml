@@ -2,15 +2,26 @@ defaults:
   - _self_
   - datasets: data
   - training: training
+  - initializer: initializer
+  - model: model
+  - plotting: plotting
+  - evaluation: eval-default
 
-model: "rsnn_optimized"
+model_name: "rsnn_optimized"
 experiment: "neurobench"
 
 dtype: 'float32'
 node: False
 device: "cuda"
+nb_workers: 2
 
 pretraining: True
+
+# If pretraining is False, you can set the load_state to a path to load a pre-trained model for each monkey
+# If state is not found, a model will be trained from scratch on each session
+load_state: 
+  loco: False
+  indy: False
 
 train_monkeys:
   - indy

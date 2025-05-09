@@ -16,13 +16,6 @@ from efficient_rsnn_bmi.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-def get_dataloader(cfg: DatasetLoaderConfig, dtype: torch.dtype = torch.float32) -> Dataset:
-    logger.info("Loading dataset...")
-    logger.info(f"Dataset config: {cfg}")
-    dataloader = DatasetLoader(config=cfg)
-    logger.info("Dataset loaded")
-    return dataloader
-
 class DatasetLoader(Dataset):
     """
     Loads the data from the PrimateReaching Dataset
@@ -247,3 +240,4 @@ class PretrainPrimateReachingDataset(PrimateReaching):
             print(f"Failed to download (trying next):\n{error}")
         finally:
             print()
+

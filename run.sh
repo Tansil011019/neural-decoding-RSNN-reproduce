@@ -24,7 +24,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ ${#extra_args[@]} -eq 0 ]; then
-    echo "Usage: ./run.sh --entrypoint <script.py> model=<model_name> experiment=<experiment_name>"
+    echo "Usage: ./run.sh --entrypoint <script.py> model_name=<model_name> experiment=<experiment_name>"
     exit 1
 fi
 
