@@ -8,11 +8,11 @@ from stork.nodes import InputGroup
 from stork.layers import Layer
 from stork.connections import Connection
 
-from activation import get_activation_function
-from regularization import get_regularizers
-from dataloader import compute_input_firing_rates
-from initializers import get_initializers
-from readout import get_custom_readouts
+from .activation import get_activation_function
+from .regularization import get_regularizers
+from .dataloader import compute_input_firing_rates
+from .initializers import get_initializers
+from .readout import get_custom_readouts
 
 from efficient_rsnn_bmi.utils.logger import get_logger
 
@@ -42,6 +42,7 @@ def get_model (cfg, nb_inputs, dtype, data=None):
     else:
         mean1 = None
 
+    print(mean1, mean2)
     hidden_init, readout_init = get_initializers(cfg, mean1, dtype)
 
     input_group = model.add_group(
@@ -69,8 +70,7 @@ def get_model (cfg, nb_inputs, dtype, data=None):
             model = model,
             size= cfg.model.hidden_size[i],
             input_group = current_src_grp,
-            reccurrent_group = current_src_grp,
-            reccurent = cfg.model.recurrent,
+            recurrent = cfg.model.recurrent[i],
             regs= regularizers,
             neuron_class=CustomLIFGroup,
             neuron_kwargs=hidden_neuron_kwargs,

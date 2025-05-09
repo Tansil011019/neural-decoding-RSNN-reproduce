@@ -14,7 +14,8 @@ nb_inputs:
   loco: 192
   indy: 96
 
-stride: 0.004  # Time step of the data
+stride: 4e-3
+# stride: 0.2  
 extend_data: True
 sample_duration: 2.0
 

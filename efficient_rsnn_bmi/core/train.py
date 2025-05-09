@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 
 from stork.generators import StandardGenerator
 
-from loss import get_train_loss
-from optimizer import get_optimizer
-from scheduler import get_lr_scheduler
-from pruning import prune_model
+from .loss import get_train_loss
+from .optimizer import get_optimizer
+from .scheduler import get_lr_scheduler
+from .pruning import prune_model
 
 from efficient_rsnn_bmi.utils.plotting import plot_activity_snapshot
 

@@ -33,12 +33,21 @@ class DatasetLoader(Dataset):
 
         ds_train, ds_val, ds_test = [], [], []
         for filename in filenames:
+            logger.info(f"Loading {filename}")
             monkey_train, monkey_val, monkey_test = self.get_single_session_data(filename)
             ds_train.append(monkey_train)
             ds_val.append(monkey_val)
             ds_test.append(monkey_test)
         dataset_train = torch.utils.data.ConcatDataset(ds_train)
         dataset_val = torch.utils.data.ConcatDataset(ds_val)
+
+        logger.info(f"Train dataset size: {len(dataset_train)}")
+        logger.info(f"Validation dataset size: {len(dataset_val)}")
+        logger.info(f"Test dataset size: {len(ds_test)}")
+
+        logger.info(f"Train dataset: {dataset_train[0]}")
+        logger.info(f"Validation dataset: {dataset_val[0]}")
+        logger.info(f"Test dataset: {ds_test[0]}")
 
         return dataset_train, dataset_val, ds_test
 
@@ -73,19 +82,33 @@ class DatasetLoader(Dataset):
             "remove_segments_inactive": False
         }
 
+        logger.info(f"Loading training dataset")
         dataset = PretrainPrimateReachingDataset(
             config=training_config
         )
 
         # * This is for generalize testing code with inactive segments
+        logger.info(f"Loading testing dataset")
         if self.config.remove_segments_inactive:
             dataset_test = PretrainPrimateReachingDataset(
                 config=test_config
             )
         else:
             dataset_test = dataset
+        
+        # ! Make sure you remove this, if it is not for debugging
+        debug_ds_size = 100
+        debug = True
+
+        if debug:
+            logger.warning("⚠️ Debug mode enabled — using only first %d samples", debug_ds_size)
+            # Trim the index arrays
+            dataset.ind_train = dataset.ind_train[:debug_ds_size]
+            dataset.ind_val = dataset.ind_val[:debug_ds_size]
+            dataset.ind_test = dataset.ind_test[:debug_ds_size]
 
         # * This is for customization validation size (Resplit)
+        logger.info("Starting data split into train/val/test sets")
         ind_train_val = dataset.ind_train + dataset.ind_val
 
         eff_ratio_val = self.config.val_ratio / (math.ceil(len(ind_train_val) / len(dataset)*100) / 100)
@@ -121,7 +144,15 @@ class DatasetLoader(Dataset):
 
         if self.config.extend_data:
             logger.info(f"Extending data with {self.n_time_steps} time steps")
+            logger.info(f"Train data size: {len(spikes_train)}")
+            logger.info(f'Train label size: {len(labels_train)}')
+            logger.info(f"Train data: {spikes_train[0]}")
+            logger.info(f"Train label: {labels_train[0]}")
             train_data, train_labels = self.extend_spikes(spikes_train, labels_train, self.n_time_steps, self.config.split_num)
+            logger.info(f"Train data size: {len(train_data)}")
+            logger.info(f'Train label size: {len(train_labels)}')
+            logger.info(f"Train data: {train_data[0]}")
+            logger.info(f"Train label: {train_labels[0]}")
             val_data, val_labels = self.extend_spikes(spikes_val, labels_val, self.n_time_steps, self.config.split_num)
         else: 
             train_data, train_labels = self.extend_spikes(spikes_train, labels_train, chunks=99)
@@ -133,6 +164,7 @@ class DatasetLoader(Dataset):
         test_data = torch.stack(test_data)
         test_labels = torch.stack(test_labels)
 
+        logger.info("Starting data augmentation")
         if any([self.config.p_drop > 0, self.config.p_insert > 0, self.config.jitter_sigma > 0]):
             data_augmentation_kwargs = dict(
                 data_augmentation = True,

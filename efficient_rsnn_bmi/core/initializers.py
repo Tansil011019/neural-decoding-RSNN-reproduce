@@ -20,7 +20,7 @@ def get_initializers(cfg, nu=None, dtype=torch.float32):
     hidden_init = FluctuationDrivenCenteredNormalInitializer(
         sigma_u=cfg.initializer.sigma_u,
         nu=nu,
-        timestep=cfg.data.dt,
+        timestep=cfg.datasets.stride,
         alpha=cfg.initializer.alpha,
         dtype=dtype
     )

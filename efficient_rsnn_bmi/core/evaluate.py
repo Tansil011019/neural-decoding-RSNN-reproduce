@@ -1,9 +1,10 @@
 import numpy as np
 import torch
 
-from efficient_rsnn_bmi.base.stork_model import StorkModel, StorkBenchmark
+from efficient_rsnn_bmi.base.stork_model import StorkModel
+from neurobench.benchmarks import Benchmark as StorkBenchmark
 
-from loss import _choose_loss
+from .loss import _choose_loss
 
 def get_test_loss(cfg):
 

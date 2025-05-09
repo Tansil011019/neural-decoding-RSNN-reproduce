@@ -23,3 +23,5 @@ tau_mem_readout: 50e-3
 tau_syn_readout: 10e-3
 
 is_half: True
+
+stochastic: False
