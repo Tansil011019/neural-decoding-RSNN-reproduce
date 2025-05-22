@@ -393,7 +393,7 @@ model.configure(
 
 model.summary()
 
-loaded_model_state = torch.load(state_dict_path[0])
+loaded_model_state = torch.load(state_dict_path[0], map_location=torch.device('cpu'))
 
 model.load_state_dict(loaded_model_state)
 
